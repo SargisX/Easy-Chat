@@ -25,3 +25,10 @@ export interface IContext{
     state:IState
     dispatch:Dispatch<IAction>
 }
+
+export interface AuthResponse {
+    error?: string;
+    message?: string;
+    userId?: string;
+    token?: string;
+  }

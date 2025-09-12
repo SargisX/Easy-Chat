@@ -4,7 +4,7 @@ import ChatList from "../Components/ChatList";
 import EmptyChat from "../Components/EmptyChat";
 import ChatWindow from "../Components/ChatWindow";
 
-export default function Layouta() {
+export default function Layout() {
   return (
     <Container fluid>
       <Row>
