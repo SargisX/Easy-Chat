@@ -32,6 +32,8 @@ export default function Layout() {
   const openChatList = () => setChatListOpen(true);
   const closeChatList = () => setChatListOpen(false);
 
+
+
   return (
     <>
       {/* Desktop */}
@@ -44,16 +46,25 @@ export default function Layout() {
             overflow: "hidden",
           }}
         >
+
           <Row className="h-100 g-0">
             <Col
               xs={3}
               className="border-end bg-light"
               style={{
                 height: "100%",
-                overflowY: "auto",
-                overflowX: "hidden",
+                overflow: "hidden",
               }}
             >
+              <div className="d-flex justify-content-between align-items-center p-3  m-0 border-bottom" >
+                <Link
+                  to='/'
+                  className="text-decoration-none text-success "
+                  onClick={() => closeChatList}
+                >
+                  <h2 className={`${styles.fontdinerSwankyRegular} p-0 m-0`} >Easy Chat</h2>
+                </Link>
+              </div>
               <ChatList />
             </Col>
             <Col
@@ -68,6 +79,7 @@ export default function Layout() {
                 <Route path="chat/:id" element={<ChatWindow />} />
                 {/* Chatbot */}
                 <Route path="chatbot" element={<ChatBot />} />
+                <Route path="/" element={<EmptyChat isMobile={isMobile} openChatList={openChatList} chatList={chatListOpen} />} />
               </Routes>
             </Col>
           </Row>
@@ -110,7 +122,9 @@ export default function Layout() {
               <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
                 <Link
                   to='/'
-                  className="text-decoration-none text-success ">
+                  className="text-decoration-none text-success "
+                  onClick={() => closeChatList}
+                >
                   <h2 className={`${styles.fontdinerSwankyRegular} p-0 m-0`} >Easy Chat</h2>
                 </Link>
                 <button
@@ -120,7 +134,7 @@ export default function Layout() {
                   ✕
                 </button>
               </div>
-              <ChatList isMobile={isMobile} />
+              <ChatList isMobile={isMobile} openChatList={closeChatList} chatList={chatListOpen} />
             </motion.div>
 
             {/* Full-screen Chat Window / ChatBot */}
@@ -135,7 +149,7 @@ export default function Layout() {
               }}
             >
               <Routes>
-                <Route path="/" element={<EmptyChat openChatList={openChatList} chatList={chatListOpen} />} />
+                <Route path="/" element={<EmptyChat openChatList={openChatList} chatList={chatListOpen} isMobile={isMobile} />} />
                 <Route
                   path="chat/:id"
                   element={
@@ -146,7 +160,7 @@ export default function Layout() {
                     />
                   }
                 />
-                <Route path="chatbot" element={<ChatBot />} />
+                <Route path="chatbot" element={<ChatBot chatList={chatListOpen} openChatList={openChatList} isMobile={isMobile} />} />
               </Routes>
             </div>
           </Container>

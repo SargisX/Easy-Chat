@@ -4,6 +4,9 @@ import { Link, useLocation } from "react-router-dom";
 import ChatItemMenu from "./ChatItemMenu";
 import type { Chat, Message } from "../../types/chat";
 import type { User } from "../../types/user";
+import styles from "../../Styles/ChatItem.module.css"
+import { useSwipeToggle } from "../../hooks/useSwipeToggle";
+
 
 interface ChatItemProps {
   chat: Chat;
@@ -11,11 +14,12 @@ interface ChatItemProps {
   lastMessage?: Message;
   onDeleteChat?: (chatId: string) => void;
   closeChatList?: () => void;
+  chatList?: boolean
 }
 
 
 
-export default function ChatItem({ chat, user, onDeleteChat, lastMessage, closeChatList }: ChatItemProps) {
+export default function ChatItem({ chat, user, onDeleteChat, lastMessage, closeChatList,chatList }: ChatItemProps) {
   const [showMenu, setShowMenu] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [menuWidth, setMenuWidth] = useState(200);
@@ -25,6 +29,11 @@ export default function ChatItem({ chat, user, onDeleteChat, lastMessage, closeC
 
   const defAvatar = import.meta.env.VITE_UNKNOWN_USER_IMAGE
 
+  const swipe = useSwipeToggle({
+    isOpen: chatList!,
+    setOpen: closeChatList!
+  });
+
 
   useEffect(() => {
     if (containerRef.current) {
@@ -32,16 +41,17 @@ export default function ChatItem({ chat, user, onDeleteChat, lastMessage, closeC
     }
   }, []);
 
+
   return (
 
-    <div className="position-relative" ref={containerRef} onClick={()=>closeChatList!()} >
+    <div className="position-relative" ref={containerRef} onClick={swipe.close} >
       <Link
         to={`/Easy-Chat/chat/${chat.id}`}
         style={{ textDecoration: "none", color: "inherit" }}
+        
       >
         <ListGroup.Item
-          className={`d-flex align-items-center gap-3 py-3 px-3 border-0 border-bottom ${isActive ? "bg-light text-dark" : ""
-            }`}
+          className={`d-flex align-items-center gap-3 py-3 px-3 border-0 border-bottom ${styles.chatItem} ${isActive ? `${styles.active}` : ''}`}
           style={{
             cursor: "pointer",
             transition: "background-color 0.2s",

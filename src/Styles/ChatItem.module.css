@@ -1,0 +1,18 @@
+/* ChatItem.module.css or your global CSS */
+.chatItem {
+    cursor: pointer;
+    transition: background-color 0.5s ease;
+  }
+  
+  .chatItem:hover {
+    background-color: #fafafa; /* hover lighter gray */
+  }
+  
+  .chatItem:active {
+    background-color: #f1f1f1; /* click / press darker gray */
+  }
+  
+  .chatItem.active {
+    background-color: #e4e4e4; /* selected chat darker */
+  }
+  

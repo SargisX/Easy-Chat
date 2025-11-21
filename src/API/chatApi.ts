@@ -22,19 +22,25 @@ export async function getChatsByUserId(userId: string): Promise<Chat[]> {
   }
 }
 
-// Get a single chat with optional message limit & offset
-export const getChatById = async (
-  chatId: string,
-  limit?: number,
-  offset?: number
-): Promise<Chat> => {
-  const params: any = {};
-  if (limit) params.limit = limit;
-  if (offset) params.offset = offset;
+// // Get a single chat with optional message limit & offset
+// export const getChatById = async (
+//   chatId: string,
+//   limit?: number,
+//   offset?: number
+// ): Promise<Chat> => {
+//   const params: any = {};
+//   if (limit) params.limit = limit;
+//   if (offset) params.offset = offset;
 
-  const response = await axios.get(`${URL}${chatId}`, { params });
+//   const response = await axios.get(`${URL}${chatId}`, { params });
+//   return response.data;
+// };
+
+export const getChatById = async (chatId: string): Promise<Chat> => {
+  const response = await axios.get(`${URL}${chatId}`);
   return response.data;
 };
+
 
 export const addChat = async (senderId: string, receiverId: string): Promise<Chat> => {
   const response = await axios.post(URL, { senderId, receiverId });

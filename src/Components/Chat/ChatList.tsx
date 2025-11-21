@@ -141,98 +141,110 @@ export default function ChatList({ isMobile, openChatList, chatList }: ListType)
   return (
     <>
       {/* Desktop */}
-      {!isMobile &&
-        (
-          <div
-            className="h-100 border-end bg-white position-relative"
-            style={{ padding: "1rem", overflowY: "auto" }}
-          >
-            <h5 className="mb-3 px-2">Chats</h5>
-            <ListGroup variant="flush">
-              <div className="">
-                <ProfileBox
-                  user={currentUser}
-                  onInfoClick={() => setShowProfilePopup(true)}
-                />
+      {!isMobile && (
+  <div
+    className="h-100 border-end bg-white position-relative"
+    style={{
+      padding: "1rem",
+      overflow: "hidden", // 🚨 important: parent should not scroll
+    }}
+  >
 
-                {/* Show Profile Popup or Edit Panel */}
-                {showProfilePopup && !showEditPanel && (
-                  <ProfilePopup
-                    user={currentUser}
-                    onClose={() => setShowProfilePopup(false)}
-                    onEdit={() => {
-                      setShowProfilePopup(false);
-                      setShowEditPanel(true); // ✅ show edit panel
-                    }}
-                  />
-                )}
+    {/* Scrollable chat content */}
+    <div
+      style={{
+        height: "100%",
+        overflowY: "auto",
+        paddingRight: "0.5rem",
+      }}
+    >
+      <ListGroup variant="flush">
+        <div>
+          <ProfileBox
+            user={currentUser}
+            onInfoClick={() => setShowProfilePopup(true)}
+          />
 
-                {showEditPanel && (
-                  <ProfileEditPanel
-                    user={currentUser}
-                    onClose={() => setShowEditPanel(false)}
-                  />
-                )}
-              </div>
+          {showProfilePopup && !showEditPanel && (
+            <ProfilePopup
+              user={currentUser}
+              onClose={() => setShowProfilePopup(false)}
+              onEdit={() => {
+                setShowProfilePopup(false);
+                setShowEditPanel(true);
+              }}
+            />
+          )}
 
-              <div className="my-2">
-                <ChatBotButton user={currentUser} />
-              </div>
+          {showEditPanel && (
+            <ProfileEditPanel
+              user={currentUser}
+              onClose={() => setShowEditPanel(false)}
+            />
+          )}
+        </div>
 
-              {chats.map((chat: Chat) => {
-                const otherId =
-                  chat.senderId === currentUserId ? chat.receiverId : chat.senderId;
-                const user = otherId ? users[otherId] : undefined;
-                if (!user) {
-                  return (
-                    <ListGroup.Item key={chat.id} className="py-3 px-3">
-                      <Spinner animation="border" variant="primary" />
-                    </ListGroup.Item>
-                  );
-                }
-                return (
-                  <div key={chat.id}>
-                    <ChatItem
-                      chat={chat}
-                      user={user}
-                      lastMessage={lastMessages[chat.id]}
-                      onDeleteChat={handleDeleteChat}
-                      closeChatList={swipe.close}
-                    />
-                  </div>
+        <div className="my-2">
+          <ChatBotButton user={currentUser} />
+        </div>
 
-                );
-              })}
-            </ListGroup>
+        {chats.map((chat) => {
+          const otherId =
+            chat.senderId === currentUserId ? chat.receiverId : chat.senderId;
 
-            {showAddPanel && (
-              <AddChatPanel
-                onClose={() => setShowAddPanel(false)}
-                onChatAdded={() => setShowAddPanel(false)}
-                existingChats={chats}
-              />
-            )}
+          const user = otherId ? users[otherId] : undefined;
 
-            {!showAddPanel && (
-              <Button
-                variant="primary"
-                className="position-absolute"
-                style={{
-                  bottom: "1rem",
-                  right: "1rem",
-                  borderRadius: "50%",
-                  width: "3rem",
-                  height: "3rem",
-                  zIndex: 1000,
-                }}
-                onClick={() => setShowAddPanel(true)}
-              >
-                +
-              </Button>
-            )}
-          </div>
-        )
-      }
+          if (!user) {
+            return (
+              <ListGroup.Item key={chat.id} className="py-3 px-3">
+                <Spinner animation="border" variant="primary" />
+              </ListGroup.Item>
+            );
+          }
+
+          return (
+            <ChatItem
+              key={chat.id}
+              chat={chat}
+              user={user}
+              lastMessage={lastMessages[chat.id]}
+              onDeleteChat={handleDeleteChat}
+            />
+          );
+        })}
+      </ListGroup>
+    </div>
+
+    {/* Floating add chat button OUTSIDE the scroll container */}
+    {!showAddPanel && (
+      <Button
+        variant="primary"
+        className="position-absolute"
+        style={{
+          bottom: "1rem",
+          right: "1rem",
+          borderRadius: "50%",
+          width: "4rem",
+          height: "4rem",
+          fontSize: "1.6rem",
+          zIndex: 2000,
+        }}
+        onClick={() => setShowAddPanel(true)}
+      >
+        💭
+      </Button>
+    )}
+
+    {showAddPanel && (
+      <AddChatPanel
+        onClose={() => setShowAddPanel(false)}
+        onChatAdded={() => setShowAddPanel(false)}
+        existingChats={chats}
+      />
+    )}
+  </div>
+)}
+
 
       {/* Mobile */}
       {isMobile && (
@@ -247,11 +259,6 @@ export default function ChatList({ isMobile, openChatList, chatList }: ListType)
             overflowY: "auto", // only scrolls the list items
           }}
         >
-          {/* Header */}
-          <div className="border-bottom px-3 py-3 d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Chats</h5>
-            {/* Optional Hamburger for sliding */}
-          </div>
 
           {/* User Profile + ChatBot */}
           <div className="px-3">
@@ -275,14 +282,13 @@ export default function ChatList({ isMobile, openChatList, chatList }: ListType)
                 onClose={() => setShowEditPanel(false)}
               />
             )}
-
-            <div className="my-2">
-              <ChatBotButton user={currentUser} />
-            </div>
           </div>
 
           {/* Chat List */}
           <ListGroup variant="flush" className="px-0">
+            <div className="my-2">
+              <ChatBotButton user={currentUser} closeChatList={swipe.close} chatList={chatList} />
+            </div>
             {chats.map((chat: Chat) => {
               const otherId =
                 chat.senderId === currentUserId ? chat.receiverId : chat.senderId;
@@ -301,6 +307,9 @@ export default function ChatList({ isMobile, openChatList, chatList }: ListType)
                   user={user}
                   lastMessage={lastMessages[chat.id]}
                   onDeleteChat={handleDeleteChat}
+                  closeChatList={swipe.close}
+                  chatList={chatList}
+
                 />
               );
             })}
@@ -311,18 +320,19 @@ export default function ChatList({ isMobile, openChatList, chatList }: ListType)
 
             <Button
               variant="primary"
-              className="position-fixed"
+              className="position-fixed "
               style={{
                 bottom: "1rem",
                 right: "1rem",
                 borderRadius: "50%",
-                width: "3rem",
-                height: "3rem",
+                width: "4rem",
+                height: "4rem",
+                fontSize: "1.6rem",
                 zIndex: 1000,
               }}
               onClick={() => setShowAddPanel(true)}
             >
-              +
+              💭
             </Button>
           )}
 

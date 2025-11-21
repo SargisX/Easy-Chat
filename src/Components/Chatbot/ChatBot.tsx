@@ -7,6 +7,7 @@ import { PromptToggle } from "./PromptToggle";
 import { parseMessage } from "../../utils/CodeSnippetFinder";
 import { CodeSnippet } from "./CodeSnippet";
 import styles from "../../Styles/ChatBot.module.css"
+import { useSwipeToggle } from "../../hooks/useSwipeToggle";
 
 interface ChatMessage {
     id: string;
@@ -15,7 +16,14 @@ interface ChatMessage {
 }
 
 
-export const ChatBot = () => {
+interface BotType {
+    openChatList?: () => void
+    chatList?: any
+    isMobile?: boolean
+}
+
+
+export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
     const [message, setMessage] = useState<string>("");
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [isSending, setIsSending] = useState<boolean>(false);
@@ -27,6 +35,11 @@ export const ChatBot = () => {
 
     const chatContainerRef = useRef<HTMLDivElement | null>(null);
     const [isAtBottom, setIsAtBottom] = useState(true);
+
+    const swipe = useSwipeToggle({
+        isOpen: chatList,
+        setOpen: openChatList!
+    });
 
     // Scroll listener to detect if user is at bottom
     const handleScroll = () => {
@@ -58,7 +71,7 @@ export const ChatBot = () => {
     });
 
     const ENHANCED_MODE_PROMPT = ". Please provide a more detailed, thoughtful, and structured answer.";
-    const CODE_MODE_PROMPT ='. When you generate code, please include ``` and the language name at the start of the code and ``` at the end of each code '
+    const CODE_MODE_PROMPT = '. When you generate code, please include ``` and the language name at the start of the code and ``` at the end of each code '
 
     async function handleSend(e: React.FormEvent) {
         e.preventDefault();
@@ -132,14 +145,62 @@ export const ChatBot = () => {
     }
 
     return (
-        <div className="d-flex flex-column h-100 p-3 bg-light">
-            <div className="border-bottom pb-2 mb-3">
+        <div className="d-flex flex-column h-100 p-2 bg-light m-0"
+            onTouchStart={swipe.onTouchStart}
+            onTouchMove={swipe.onTouchMove}
+            onTouchEnd={swipe.onTouchEnd}>
+            <div className="border-bottom p-3 d-flex gap-2">
+                {isMobile &&
+                    (
+                        <div
+                            className="d-flex flex-column justify-content-between m=0 p-0"
+                            style={{
+                                width: "30px",
+                                height: "22px",
+                                cursor: "pointer",
+                            }}
+                            onClick={swipe.open}
+                        >
+                            <span
+                                style={{
+                                    display: "block",
+                                    height: "4px",
+                                    borderRadius: "2px",
+                                    backgroundColor: "#333",
+                                    transition: "all 0.3s ease",
+                                    transform: chatList ? "rotate(45deg) translate(5px, 5px)" : "none",
+                                }}
+                            />
+                            <span
+                                style={{
+                                    display: "block",
+                                    height: "4px",
+                                    borderRadius: "2px",
+                                    backgroundColor: "#333",
+                                    opacity: chatList ? 0 : 1,
+                                    transition: "all 0.3s ease",
+                                }}
+                            />
+                            <span
+                                style={{
+                                    display: "block",
+                                    height: "4px",
+                                    borderRadius: "2px",
+                                    backgroundColor: "#333",
+                                    transition: "all 0.3s ease",
+                                    transform: chatList ? "rotate(-45deg) translate(5px, -5px)" : "none",
+                                }}
+                            />
+                        </div>
+                    )
+                }
                 <h5>AI ChatBot</h5>
             </div>
 
             {/* Chat area */}
 
-            <div className="flex-grow-1 overflow-auto mb-3 px-2 d-flex flex-column gap-2" style={{ width: '100%' }}>
+            <div className="flex-grow-1 overflow-auto mb-3 px-2 " 
+            style={{ width: '100%' }}>
 
                 {messages.map((msg) => {
                     if (msg.sender === "user") {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Form, InputGroup, Button, Spinner } from "react-bootstrap";
 import { getChatById } from "../../API/chatApi";
@@ -24,6 +24,8 @@ export default function ChatWindow({ isMobile, openChatList, chatList }: WindowT
 
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { messages, containerRef, loading, sendMessage } =
     useChatMessages(chatId);
@@ -85,6 +87,7 @@ export default function ChatWindow({ isMobile, openChatList, chatList }: WindowT
         chatId,
         date: Date.now(),
       });
+      inputRef.current?.focus();
     } catch (err) {
       console.error("Send error:", err);
       alert("Failed to send message");
@@ -100,7 +103,7 @@ export default function ChatWindow({ isMobile, openChatList, chatList }: WindowT
       {!isMobile &&
         (
           <div className="d-flex flex-column h-100 p-3 bg-light">
-            <div className="border-bottom pb-2 mb-3">
+            <div className="border-bottom  p-2 m-0">
               <h5>{chatUser?.username || "Select a chat"}</h5>
             </div>
 
@@ -134,6 +137,7 @@ export default function ChatWindow({ isMobile, openChatList, chatList }: WindowT
               <InputGroup>
                 <Form.Control
                   type="text"
+
                   placeholder="Type a message..."
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -225,14 +229,15 @@ export default function ChatWindow({ isMobile, openChatList, chatList }: WindowT
                 <div className="text-center text-muted mt-4">No messages yet.</div>
               ) : (
                 messages.map((msg) => (
-                  <ChatMessage
-                    key={msg.id}
-                    sender={msg.senderId === currentUserId ? "Me" : chatUser?.username || "Unknown"}
-                    content={msg.content}
-                    time={msg.date}
-                    avatarUrl={msg.senderId === currentUserId ? currentUser?.avatarUrl : chatUser?.avatarUrl}
-                    align={msg.senderId === currentUserId ? "end" : "start"}
-                  />
+                  <div key={msg.id}>
+                    <ChatMessage
+                      sender={msg.senderId === currentUserId ? "Me" : chatUser?.username || "Unknown"}
+                      content={msg.content}
+                      time={msg.date}
+                      avatarUrl={msg.senderId === currentUserId ? currentUser?.avatarUrl : chatUser?.avatarUrl}
+                      align={msg.senderId === currentUserId ? "end" : "start"}
+                    />
+                  </div>
                 ))
               )}
             </div>
@@ -249,6 +254,7 @@ export default function ChatWindow({ isMobile, openChatList, chatList }: WindowT
                 <InputGroup>
                   <Form.Control
                     type="text"
+                    ref={inputRef}
                     placeholder="Type a message..."
                     value={input}
                     onChange={(e) => setInput(e.target.value)}

@@ -2,12 +2,15 @@ import { ListGroup, Image } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { User } from "../../types/user";
 import { Link } from "react-router-dom";
+import { useSwipeToggle } from "../../hooks/useSwipeToggle";
 
 interface ChatBotButtonProps {
   user: User;
+  closeChatList?: () => void;
+  chatList?: boolean
 }
 
-const ChatBotButton = ({ user }: ChatBotButtonProps) => {
+const ChatBotButton = ({ user, closeChatList, chatList }: ChatBotButtonProps) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -16,11 +19,17 @@ const ChatBotButton = ({ user }: ChatBotButtonProps) => {
 
   const isActive = location.pathname.includes(bot_id);
 
+  const swipe = useSwipeToggle({
+    isOpen: chatList!,
+    setOpen: closeChatList!
+  });
+
   return (
     <div className="position-relative">
       <Link
         to={`/Easy-Chat/${bot_id}`}
         style={{ textDecoration: "none", color: "inherit" }}
+        onClick={swipe.close} 
       >
         <ListGroup.Item
           onClick={() => navigate(`/Easy-Chat/chat/${bot_id}`)}
