@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Form, InputGroup, Button, Spinner } from "react-bootstrap";
 import { getChatById } from "../../API/chatApi";

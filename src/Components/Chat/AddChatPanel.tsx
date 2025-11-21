@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Form, Button, ListGroup, Spinner } from "react-bootstrap";
 import { addChat } from "../../API/chatApi";
 import { User } from "../../types/user";

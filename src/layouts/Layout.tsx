@@ -4,7 +4,7 @@ import ChatWindow from "../Components/Chat/ChatWindow";
 import { ChatBot } from "../Components/Chatbot/ChatBot";
 import { Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { MobileView, BrowserView } from "react-device-detect";
+import { MobileView } from "react-device-detect";
 import { motion } from "framer-motion";
 import EmptyChat from "../Components/Chat/EmptyChat";
 

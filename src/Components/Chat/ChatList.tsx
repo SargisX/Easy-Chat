@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ListGroup, Spinner, Alert, Button } from "react-bootstrap";
 import ChatItem from "./ChatItem";
 import { userCache } from "../../utils/userCache";

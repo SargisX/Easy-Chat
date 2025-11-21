@@ -1,4 +1,3 @@
-import React from "react";
 
 interface ChatMessageProps {
   sender: string;
@@ -9,7 +8,6 @@ interface ChatMessageProps {
 }
 
 export default function ChatMessage({
-  sender,
   content,
   time,
   avatarUrl,

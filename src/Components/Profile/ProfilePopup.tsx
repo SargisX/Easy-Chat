@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "react-bootstrap";
 import { useState } from "react";
 import { User } from "../../types/user";

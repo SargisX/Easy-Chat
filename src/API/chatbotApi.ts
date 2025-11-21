@@ -4,7 +4,6 @@ const URL = "https://apifreellm.com/api/chat";
 
 export async function sendAiMessage(message: string) {
   try {
-    const editedMessage: string = message.length >= 20 ? `${message}, write at least 50 words` : message
     const aiRes = await axios.post(
       URL,
       { message: message },

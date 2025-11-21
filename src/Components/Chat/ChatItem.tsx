@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ListGroup, Image, Button } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import ChatItemMenu from "./ChatItemMenu";

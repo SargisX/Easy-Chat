@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Chat, InputChat } from "../types/chat";
+import type { Chat } from "../types/chat";
 
 const URL = "http://localhost:5000/chats/";
 
