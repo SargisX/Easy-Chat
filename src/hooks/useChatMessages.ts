@@ -28,7 +28,7 @@ export function useChatMessages(chatId: string | undefined) {
   /* ---------------------- LOAD LAST MESSAGES WHEN CHAT CHANGES ---------------------- */
   useEffect(() => {
     if (!chatId) return;
-
+    setLoading(true)
     if (messageCache[chatId]) {
       setMessages(messageCache[chatId]);
       setOffset(messageCache[chatId].length);
@@ -38,6 +38,7 @@ export function useChatMessages(chatId: string | undefined) {
 
     loadMessages(0).then(() => {
       scrollToBottom();
+      setLoading(false);
     });
 
   }, [chatId]);
