@@ -1,50 +1,122 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { ChatContext } from "./context/chatContext";
-import { JSX, useEffect, useReducer } from "react";
-import { reducer } from "./context/reducer";
-import { initialState } from "./context/initialState";
-import { getAllChats, getAllUsers } from "./context/api";
-import { ActionTypes } from "./context/types";
+import { useEffect, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+import Layout from "./layouts/Layout";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
-import Layout from "./layouts/Layout";
+import { logout } from "./API/usersApi";
+import { detectSmartphone } from "./utils/mobileCheck";
 
-function ProtectedRoute({ children }: { children: JSX.Element }) {
-  const token = sessionStorage.getItem("token");
-  return token ? children : <Navigate to="/Easy-Chat/login" replace />;
-}
+function AppRoutes() {
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("token")
+  );
 
-export default function App() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const location = useLocation();
+
+  // BroadcastChannel listener (login/logout across tabs)
+  useEffect(() => {
+    const bc = new BroadcastChannel("auth");
+
+    bc.onmessage = (event) => {
+      if (event.data.type === "login") {
+        setIsAuthenticated(true);
+      }
+      if (event.data.type === "logout") {
+        setIsAuthenticated(false);
+      }
+    };
+
+    return () => bc.close();
+  }, []);
 
   useEffect(() => {
-    getAllChats().then((res) =>
-      dispatch({ type: ActionTypes.putChats, payload: res })
-    );
-    getAllUsers().then((res) =>
-      dispatch({ type: ActionTypes.putUsers, payload: res })
-    );
+    detectSmartphone();
+  }, []);
+
+  // 🔥 GLOBAL SESSION CHECK
+  const checkSession = () => {
+    const sessionTime = Number(sessionStorage.getItem("sessionTime"));
+    if (!sessionTime) return;
+
+    const maxSessionDays = 7// your session limit
+    const timeConverter = 1000 * 60 * 60 * 24 * 7 //
+    const elapsedHours = (Date.now() - sessionTime) / timeConverter
+
+
+    if (elapsedHours >= maxSessionDays) {
+      logout();
+      sessionStorage.removeItem("sessionTime");
+
+      const bc = new BroadcastChannel("auth");
+      bc.postMessage({ type: "logout" });
+      bc.close();
+
+      setIsAuthenticated(false);
+    }
+  };
+
+  // Run check ON LOAD
+  useEffect(() => {
+    checkSession();
+  }, []);
+
+  // Run check on every location change
+  useEffect(() => {
+    checkSession();
+    setIsAuthenticated(!!localStorage.getItem("token"));
+  }, [location]);
+
+  // Run check when other tabs modify storage
+  useEffect(() => {
+    const handleStorageChange = () => {
+      checkSession();
+      setIsAuthenticated(!!localStorage.getItem("token"));
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  // Run check EVERY 20 seconds (optional but ensures realtime logout)
+  useEffect(() => {
+    const interval = setInterval(checkSession, 20000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <ChatContext.Provider value={{ state, dispatch }}>
-      <Router>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/Easy-Chat/register" element={<Register />} />
-          <Route path="/Easy-Chat/login" element={<Login />} />
+    <Routes>
+      {/* Public pages */}
+      <Route
+        path="/Easy-Chat/login"
+        element={isAuthenticated ? <Navigate to="/Easy-Chat/" /> : <Login />}
+      />
+      <Route
+        path="/Easy-Chat/register"
+        element={isAuthenticated ? <Navigate to="/Easy-Chat/" /> : <Register />}
+      />
 
-          {/* Protected routes */}
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </Router>
-    </ChatContext.Provider>
+      {/* Protected pages */}
+      <Route
+        path="/Easy-Chat/*"
+        element={
+          isAuthenticated ? <Layout /> : <Navigate to="/Easy-Chat/login" />
+        }
+      />
+
+      <Route path="*" element={<Navigate to="/Easy-Chat/login" />} />
+    </Routes>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <AppRoutes />
+    </Router>
   );
 }

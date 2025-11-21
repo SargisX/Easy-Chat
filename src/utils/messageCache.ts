@@ -1,0 +1,1 @@
+export const messageCache: Record<string, any[]> = {};

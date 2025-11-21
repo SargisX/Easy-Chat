@@ -1,19 +1,20 @@
 export interface Message {
-  id: number;
+  id: string;
   content: string;
+  chatId: string;
   date: number; // ISO string
-  senderId: number;
-  receiverId: number;
+  senderId: string;
 }
 
 
 export interface Chat {
-  id: number;
-  userId: number; // the other user you are chatting with
-  lastMessageId?: number;
-  messages: Message[];
+  id: string;
+  senderId: string; // the other user you are chatting with
+  receiverId:string
+  lastMessageId?:string;
+  messages:Message[]
 }
 
-export type InputChat = Omit<Chat,'id'>
+export type InputChat = Omit<Chat,'id' | 'messages'>
 
 export type InputMessage = Omit<Message,'id'>

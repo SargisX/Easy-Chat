@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import { login } from "../context/authService";
+import { UserStatus } from "../types/user";
+import { updateUserStatus } from "../API/usersApi";
+import { initTabSession } from "../utils/authSync";
 
 export default function Login() {
   const [username, setUsername] = useState<string>("");
@@ -11,6 +14,7 @@ export default function Login() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
     if (!username || !password) {
       setStatus("⚠️ Please fill in all fields.");
       return;
@@ -18,17 +22,29 @@ export default function Login() {
 
     try {
       const data = await login(username, password);
+
       if (data.error) {
         setStatus(`❌ ${data.error}`);
-      } else {
-        if (data.token) {
-          // Save to session storage
-          sessionStorage.setItem("token", data.token);
-          sessionStorage.setItem("userId", data.userId || "");
-        }
-        // Navigate to main chat page
-        navigate("/Easy-Chat/");
+        return;
       }
+
+      if (data.token && data.userId) {
+        // PERSIST login across all tabs
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.userId);
+
+        // PER-TAB session ID
+        initTabSession()
+        sessionStorage.setItem('sessionTime',Date.now().toString())
+        // Sync login event across tabs
+        const bc = new BroadcastChannel("auth");
+        bc.postMessage({ type: "login" });
+
+        await updateUserStatus(data.userId, UserStatus.ONLINE);
+      }
+
+      navigate("/Easy-Chat/");
+
     } catch (err) {
       setStatus("❌ Something went wrong.");
     }

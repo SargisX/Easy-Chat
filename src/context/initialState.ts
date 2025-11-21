@@ -1,6 +1,7 @@
 import { IState } from "./types";
 
-export const initialState:IState={
-    chats:[],
-    users:[],
-}
+export const initialState: IState = {
+  chats: [],
+  users: [],
+  messages: [],
+};

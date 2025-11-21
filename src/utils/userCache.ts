@@ -1,0 +1,1 @@
+export const userCache: Record<string, any> = {};

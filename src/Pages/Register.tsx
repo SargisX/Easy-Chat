@@ -21,7 +21,7 @@ export default function Register() {
       if (data.error) {
         setStatus(`❌ ${data.error}`);
       } else {
-        setStatus(`✅ ${data.message} (ID: ${data.userId})`);
+        setStatus(`✅ ${data.message}`);
         // After successful register → redirect to login page
         setTimeout(() => navigate("/login"), 1500);
       }

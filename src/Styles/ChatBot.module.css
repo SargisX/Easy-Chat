@@ -1,0 +1,35 @@
+.ai_thinking {
+    font-weight: 500;
+    display: inline-block;
+    background: linear-gradient(90deg, #8b8888, #cac9c9, #b9b9b9);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: shimmer 2s infinite linear;
+    letter-spacing: 1px;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.ai_message {
+    background: #464646;
+    /* slightly different from thinking */
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    color: #222;
+}
+
+.user_message {
+    background-color: #888888; /* slightly different from thinking */
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    color: #222;
+  }
