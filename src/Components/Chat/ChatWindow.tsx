@@ -9,7 +9,7 @@ import { useSwipeToggle } from "../../hooks/useSwipeToggle";
 
 
 interface WindowType {
-  openChatList?: () => void
+  openChatList?: (open: boolean) => void
   chatList?: any
   isMobile?: boolean
 }
@@ -28,7 +28,11 @@ export default function ChatWindow({ isMobile, openChatList, chatList }: WindowT
   const { messages, containerRef, loading, sendMessage } =
     useChatMessages(chatId);
 
-  const swipe = useSwipeToggle(openChatList!);
+  const swipe = useSwipeToggle({
+    isOpen: chatList,
+    setOpen: openChatList!
+  });
+
 
   // Scroll to bottom when messages update
   useEffect(() => {
@@ -155,6 +159,7 @@ export default function ChatWindow({ isMobile, openChatList, chatList }: WindowT
         (
           <div
             className="d-flex flex-column h-100 bg-light"
+
             onTouchStart={swipe.onTouchStart}
             onTouchMove={swipe.onTouchMove}
             onTouchEnd={swipe.onTouchEnd}
@@ -170,7 +175,7 @@ export default function ChatWindow({ isMobile, openChatList, chatList }: WindowT
                   height: "22px",
                   cursor: "pointer",
                 }}
-                onClick={() => swipe.onTouchMove}
+                onClick={swipe.open}
               >
                 <span
                   style={{

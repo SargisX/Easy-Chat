@@ -10,9 +10,12 @@ interface ChatItemProps {
   user: User; // the "other user" in the chat
   lastMessage?: Message;
   onDeleteChat?: (chatId: string) => void;
+  closeChatList?: () => void;
 }
 
-export default function ChatItem({ chat, user, onDeleteChat, lastMessage }: ChatItemProps) {
+
+
+export default function ChatItem({ chat, user, onDeleteChat, lastMessage, closeChatList }: ChatItemProps) {
   const [showMenu, setShowMenu] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [menuWidth, setMenuWidth] = useState(200);
@@ -31,7 +34,7 @@ export default function ChatItem({ chat, user, onDeleteChat, lastMessage }: Chat
 
   return (
 
-    <div className="position-relative" ref={containerRef}>
+    <div className="position-relative" ref={containerRef} onClick={()=>closeChatList!()} >
       <Link
         to={`/Easy-Chat/chat/${chat.id}`}
         style={{ textDecoration: "none", color: "inherit" }}
@@ -87,7 +90,7 @@ export default function ChatItem({ chat, user, onDeleteChat, lastMessage }: Chat
         <ChatItemMenu
           containerWidth={menuWidth}
           onDelete={
-             onDeleteChat
+            onDeleteChat
               ? () => onDeleteChat(chat.id)
               : undefined
           }

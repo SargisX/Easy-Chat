@@ -15,6 +15,7 @@ import ProfilePopup from "../Profile/ProfilePopup";
 import ProfileEditPanel from "../Profile/ProfileEditPanel"; // ✅ new component
 import { getMessageById } from "../../API/messageApi";
 import ChatBotButton from "../Chatbot/ChatBotButton";
+import { useSwipeToggle } from "../../hooks/useSwipeToggle";
 
 interface ListType {
   openChatList?: () => void
@@ -22,7 +23,7 @@ interface ListType {
   isMobile?: boolean
 }
 
-export default function ChatList({ isMobile }: ListType) {
+export default function ChatList({ isMobile, openChatList, chatList }: ListType) {
   const ctx = useContext(ChatContext);
   if (!ctx) return null;
   const { state, dispatch } = ctx;
@@ -42,7 +43,10 @@ export default function ChatList({ isMobile }: ListType) {
 
   const [lastMessages, setLastMessages] = useState<Record<string, Message | undefined>>({});
 
-
+  const swipe = useSwipeToggle({
+    isOpen: chatList,
+    setOpen: openChatList!
+  });
 
   useEffect(() => {
     let mounted = true;
@@ -193,6 +197,7 @@ export default function ChatList({ isMobile }: ListType) {
                       user={user}
                       lastMessage={lastMessages[chat.id]}
                       onDeleteChat={handleDeleteChat}
+                      closeChatList={swipe.close}
                     />
                   </div>
 
@@ -232,6 +237,9 @@ export default function ChatList({ isMobile }: ListType) {
       {/* Mobile */}
       {isMobile && (
         <div
+          onTouchStart={swipe.onTouchStart}
+          onTouchMove={swipe.onTouchMove}
+          onTouchEnd={swipe.onTouchEnd}
           className="position-relative bg-white"
           style={{
             width: "100%",

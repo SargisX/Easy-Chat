@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { MobileView } from "react-device-detect";
 import { motion } from "framer-motion";
 import EmptyChat from "../Components/Chat/EmptyChat";
+import { Link } from "react-router-dom";
+import styles from "../Styles/Logo.module.css";
 
 export default function Layout() {
   enum DeviceType {
@@ -106,7 +108,11 @@ export default function Layout() {
               }}
             >
               <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
-                <h5>Chats</h5>
+                <Link
+                  to='/'
+                  className="text-decoration-none text-success ">
+                  <h2 className={`${styles.fontdinerSwankyRegular} p-0 m-0`} >Easy Chat</h2>
+                </Link>
                 <button
                   className="btn btn-sm btn-outline-secondary"
                   onClick={closeChatList}
@@ -114,7 +120,7 @@ export default function Layout() {
                   ✕
                 </button>
               </div>
-              <ChatList />
+              <ChatList isMobile={isMobile} />
             </motion.div>
 
             {/* Full-screen Chat Window / ChatBot */}
@@ -129,7 +135,7 @@ export default function Layout() {
               }}
             >
               <Routes>
-                <Route path="/" element={<EmptyChat />} />
+                <Route path="/" element={<EmptyChat openChatList={openChatList} chatList={chatListOpen} />} />
                 <Route
                   path="chat/:id"
                   element={
