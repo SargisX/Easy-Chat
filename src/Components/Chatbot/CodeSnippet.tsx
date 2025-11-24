@@ -15,7 +15,7 @@ export const CodeSnippet: React.FC<CodeSnippetProps> = ({ code, language }) => {
   };
 
   return (
-    <div style={{ backgroundColor: "#1e1e1e", borderRadius: "8px", margin: "8px 0", fontFamily: "monospace" }}>
+    <div style={{ backgroundColor: "#1e1e1e", borderRadius: "8px", margin: "8px 0", fontFamily: "monospace" }} >
       {/* Header */}
       <div style={{
         display: "flex",

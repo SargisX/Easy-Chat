@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, Button } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "../../types/user";
-import { InfoCircle, XCircle } from "react-bootstrap-icons";
+import { InfoCircle } from "react-bootstrap-icons";
 
 interface ProfileBoxProps {
   user: User;
@@ -111,17 +111,6 @@ export default function ProfileBox({ user, onInfoClick }: ProfileBoxProps) {
               </Button>
 
               {/* Full-width Close button */}
-              <Button
-                variant="outline-dark"
-                className="w-100 border rounded-pill py-2 d-flex align-items-center justify-content-center gap-2"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setExpanded(false);
-                }}
-              >
-                <XCircle size={18} />
-                Close
-              </Button>
             </motion.div>
           )}
         </AnimatePresence>

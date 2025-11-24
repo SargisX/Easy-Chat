@@ -29,8 +29,8 @@ export default function Layout() {
   }, []);
 
   // Function to open chat list from ChatWindow or ChatBot
-  const openChatList = () => setChatListOpen(true);
-  const closeChatList = () => setChatListOpen(false);
+  const openChatList = () => setTimeout(() => setChatListOpen(true), 100);
+  const closeChatList = () => setTimeout(() => setChatListOpen(false), 100);
 
 
 
@@ -102,7 +102,7 @@ export default function Layout() {
             <motion.div
               initial={{ x: "-100%" }}
               animate={{ x: chatListOpen ? 0 : "-100%" }}
-              transition={{ type: "tween", duration: 0.3 }}
+              transition={{ type: "tween", duration: 0.5 }}
               style={{
                 position: "absolute",
                 top: 0,

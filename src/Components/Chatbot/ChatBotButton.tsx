@@ -25,11 +25,10 @@ const ChatBotButton = ({ user, closeChatList, chatList }: ChatBotButtonProps) =>
   });
 
   return (
-    <div className="position-relative">
+    <div className="position-relative" onClick={swipe.close}>
       <Link
         to={`/Easy-Chat/${bot_id}`}
         style={{ textDecoration: "none", color: "inherit" }}
-        onClick={swipe.close} 
       >
         <ListGroup.Item
           onClick={() => navigate(`/Easy-Chat/chat/${bot_id}`)}

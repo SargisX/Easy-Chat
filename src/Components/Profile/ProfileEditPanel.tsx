@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, useContext } from "react";
 import { motion } from "framer-motion";
 import { Button, Form } from "react-bootstrap";
-import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
+import { uploadToCloudinary } from "../../utils/CloudinaryFunctions";
 import { EditUser, User } from "../../types/user";
 import { updateUserProfile } from "../../API/usersApi";
 import { ChatContext } from "../../context/chatContext";
@@ -10,18 +10,13 @@ import { compressImage } from "../../utils/compressImage";
 
 interface ProfileEditPanelProps {
   user: User;
+  setUser: (user: User) => void;
   onClose: () => void;
 }
 
-export default function ProfileEditPanel({ user, onClose }: ProfileEditPanelProps) {
+export default function ProfileEditPanel({ user, setUser, onClose }: ProfileEditPanelProps) {
   const ctx = useContext(ChatContext);
   const { dispatch } = ctx!;
-
-  const [form, setForm] = useState<EditUser>({
-    username: user.username || "",
-    displayName: user.displayName || "",
-    bio: user.bio || "",
-  });
 
   const [avatar, setAvatar] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -29,8 +24,11 @@ export default function ProfileEditPanel({ user, onClose }: ProfileEditPanelProp
   const defAvatar = import.meta.env.VITE_UNKNOWN_USER_IMAGE
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const name = e.target.name
+    const value = e.target.value;
+
+    const updatedUser: User = { ...user, [name]: value };
+    setUser(updatedUser); // just pass object
   };
 
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -51,13 +49,13 @@ export default function ProfileEditPanel({ user, onClose }: ProfileEditPanelProp
         const compressed = await compressImage(avatar);
         avatarUrl = await uploadToCloudinary(compressed);
       }
-      
+
 
       // ✅ Update backend
       const updatedUser = await updateUserProfile(user.id, {
-        username: form.username,
-        displayName: form.displayName,
-        bio: form.bio,
+        username: user.username,
+        displayName: user.displayName,
+        bio: user.bio,
         avatarUrl,
       });
 
@@ -119,7 +117,7 @@ export default function ProfileEditPanel({ user, onClose }: ProfileEditPanelProp
           <Form.Label>Username</Form.Label>
           <Form.Control
             name="username"
-            value={form.username}
+            value={user.username}
             onChange={handleChange}
             required
           />
@@ -129,7 +127,7 @@ export default function ProfileEditPanel({ user, onClose }: ProfileEditPanelProp
           <Form.Label>Name</Form.Label>
           <Form.Control
             name="displayName"
-            value={form.displayName || ""}
+            value={user.displayName || ""}
             placeholder="Enter your name..."
             onChange={handleChange}
           />
@@ -141,7 +139,7 @@ export default function ProfileEditPanel({ user, onClose }: ProfileEditPanelProp
             as="textarea"
             rows={3}
             name="bio"
-            value={form.bio || ""}
+            value={user.bio || ""}
             onChange={handleChange}
             placeholder="Enter your bio..."
             style={{ maxHeight: "250px", minHeight: "100px", resize: "vertical" }}

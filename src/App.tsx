@@ -37,16 +37,21 @@ function AppRoutes() {
 
   useEffect(() => {
     detectSmartphone();
-  }, []);
+  }, [!localStorage.getItem('deviceType')]);
 
   // 🔥 GLOBAL SESSION CHECK
   const checkSession = () => {
-    const sessionTime = Number(sessionStorage.getItem("sessionTime"));
-    if (!sessionTime) return;
+    const sessionTime = sessionStorage.getItem("sessionTime")
+    const sessionTimeNum = Number(sessionTime);
+
+    if (!sessionTime || sessionTime == 'null') {
+      setIsAuthenticated(false);
+      return;
+    }
 
     const maxSessionDays = 7// your session limit
     const timeConverter = 1000 * 60 * 60 * 24 * 7 //
-    const elapsedHours = (Date.now() - sessionTime) / timeConverter
+    const elapsedHours = (Date.now() - sessionTimeNum) / timeConverter
 
 
     if (elapsedHours >= maxSessionDays) {
@@ -87,6 +92,7 @@ function AppRoutes() {
     const interval = setInterval(checkSession, 20000);
     return () => clearInterval(interval);
   }, []);
+
 
   return (
     <Routes>

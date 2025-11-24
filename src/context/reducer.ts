@@ -34,6 +34,25 @@ export const reducer = (state: IState, action: IAction): IState => {
         ...state,
         messages: [...state.messages, (action.payload as IState["messages"][0])],
       };
+    // EDIT MESSAGE
+    case ActionTypes.EDIT_MESSAGE:
+      return {
+        ...state,
+        messages: state.messages.map((msg) =>
+          msg.id === (action.payload as { id: string; content: string }).id
+            ? { ...msg, content: (action.payload as { id: string; content: string }).content }
+            : msg
+        ),
+      };
+
+    // REMOVE MESSAGE
+    case ActionTypes.REMOVE_MESSAGE:
+      return {
+        ...state,
+        messages: state.messages.filter(
+          (msg) => msg.id !== (action.payload as { id: string }).id
+        ),
+      };
     case ActionTypes.UPDATE_USER:
       const updatedUser = action.payload as IState["users"][0];
       return {

@@ -18,7 +18,9 @@ export enum ActionTypes {
   ADD_USER = "ADD_USER",
   SET_MESSAGES = "SET_MESSAGES",
   ADD_MESSAGE = "ADD_MESSAGE",
-  UPDATE_USER = "UPDATE_USER", // ✅ add this line
+  UPDATE_USER = "UPDATE_USER",
+  EDIT_MESSAGE = "EDIT_MESSAGE",
+  REMOVE_MESSAGE = "REMOVE_MESSAGE", // ✅ add this line
 }
 
 

@@ -29,6 +29,7 @@ export default function ChatList({ isMobile, openChatList, chatList }: ListType)
   const { state, dispatch } = ctx;
   const { chats } = state;
 
+
   const [users, setUsers] = useState<Record<string, User>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -42,6 +43,8 @@ export default function ChatList({ isMobile, openChatList, chatList }: ListType)
   const [showEditPanel, setShowEditPanel] = useState(false); // ✅ new state
 
   const [lastMessages, setLastMessages] = useState<Record<string, Message | undefined>>({});
+
+
 
   const swipe = useSwipeToggle({
     isOpen: chatList,
@@ -142,108 +145,110 @@ export default function ChatList({ isMobile, openChatList, chatList }: ListType)
     <>
       {/* Desktop */}
       {!isMobile && (
-  <div
-    className="h-100 border-end bg-white position-relative"
-    style={{
-      padding: "1rem",
-      overflow: "hidden", // 🚨 important: parent should not scroll
-    }}
-  >
+        <div
+          className="h-100 border-end bg-white position-relative"
+          style={{
+            padding: "1rem",
+            overflow: "hidden", // 🚨 important: parent should not scroll
+          }}
+        >
 
-    {/* Scrollable chat content */}
-    <div
-      style={{
-        height: "100%",
-        overflowY: "auto",
-        paddingRight: "0.5rem",
-      }}
-    >
-      <ListGroup variant="flush">
-        <div>
-          <ProfileBox
-            user={currentUser}
-            onInfoClick={() => setShowProfilePopup(true)}
-          />
+          {/* Scrollable chat content */}
+          <div
+            style={{
+              height: "100%",
+              overflowY: "auto",
+              paddingRight: "0.5rem",
+            }}
+          >
+            <ListGroup variant="flush" className="">
+              <div>
+                <ProfileBox
+                  user={currentUser}
+                  onInfoClick={() => setShowProfilePopup(true)}
+                />
 
-          {showProfilePopup && !showEditPanel && (
-            <ProfilePopup
-              user={currentUser}
-              onClose={() => setShowProfilePopup(false)}
-              onEdit={() => {
-                setShowProfilePopup(false);
-                setShowEditPanel(true);
-              }}
-            />
+                {showProfilePopup && !showEditPanel && (
+                  <ProfilePopup
+                    user={currentUser}
+                    onClose={() => setShowProfilePopup(false)}
+                    onEdit={() => {
+                      setShowProfilePopup(false);
+                      setShowEditPanel(true);
+                    }}
+                  />
+                )}
+
+                {showEditPanel && (
+                  <ProfileEditPanel
+                    user={currentUser}
+                    setUser={setCurrentUser}
+                    onClose={() => setShowEditPanel(false)}
+                  />
+                )}
+              </div>
+
+              <div className="my-2">
+                <ChatBotButton user={currentUser} />
+              </div>
+
+              {chats.map((chat) => {
+                const otherId =
+                  chat.senderId === currentUserId ? chat.receiverId : chat.senderId;
+
+                const user = otherId ? users[otherId] : undefined;
+
+                if (!user) {
+                  return (
+                    <ListGroup.Item key={chat.id} className="py-3 px-3">
+                      <Spinner animation="border" variant="primary" />
+                    </ListGroup.Item>
+                  );
+                }
+
+                return (
+                  <ChatItem
+                    key={chat.id}
+                    chat={chat}
+                    user={user}
+                    lastMessage={lastMessages[chat.id]}
+                    onDeleteChat={handleDeleteChat}
+                  />
+                );
+              })}
+            </ListGroup>
+          </div>
+
+          {/* Floating add chat button OUTSIDE the scroll container */}
+          {!showAddPanel && (
+            <div >
+              <Button
+                variant="primary"
+                className="position-fixed "
+                style={{
+                  bottom: "1rem",
+                  borderRadius: "50%",
+                  width: "4rem",
+                  height: "4rem",
+                  fontSize: "1.6rem",
+                  zIndex: 1000,
+                }}
+                onClick={() => setShowAddPanel(true)}
+              >
+                💭
+              </Button>
+            </div>
           )}
 
-          {showEditPanel && (
-            <ProfileEditPanel
-              user={currentUser}
-              onClose={() => setShowEditPanel(false)}
+          {showAddPanel && (
+            <AddChatPanel
+              onClose={() => setShowAddPanel(false)}
+              onChatAdded={() => setShowAddPanel(false)}
+              existingChats={chats}
             />
           )}
         </div>
-
-        <div className="my-2">
-          <ChatBotButton user={currentUser} />
-        </div>
-
-        {chats.map((chat) => {
-          const otherId =
-            chat.senderId === currentUserId ? chat.receiverId : chat.senderId;
-
-          const user = otherId ? users[otherId] : undefined;
-
-          if (!user) {
-            return (
-              <ListGroup.Item key={chat.id} className="py-3 px-3">
-                <Spinner animation="border" variant="primary" />
-              </ListGroup.Item>
-            );
-          }
-
-          return (
-            <ChatItem
-              key={chat.id}
-              chat={chat}
-              user={user}
-              lastMessage={lastMessages[chat.id]}
-              onDeleteChat={handleDeleteChat}
-            />
-          );
-        })}
-      </ListGroup>
-    </div>
-
-    {/* Floating add chat button OUTSIDE the scroll container */}
-    {!showAddPanel && (
-      <Button
-        variant="primary"
-        className="position-absolute"
-        style={{
-          bottom: "1rem",
-          right: "1rem",
-          borderRadius: "50%",
-          width: "4rem",
-          height: "4rem",
-          fontSize: "1.6rem",
-          zIndex: 2000,
-        }}
-        onClick={() => setShowAddPanel(true)}
-      >
-        💭
-      </Button>
-    )}
-
-    {showAddPanel && (
-      <AddChatPanel
-        onClose={() => setShowAddPanel(false)}
-        onChatAdded={() => setShowAddPanel(false)}
-        existingChats={chats}
-      />
-    )}
-  </div>
-)}
+      )}
 
 
       {/* Mobile */}
@@ -274,11 +279,13 @@ export default function ChatList({ isMobile, openChatList, chatList }: ListType)
                   setShowProfilePopup(false);
                   setShowEditPanel(true);
                 }}
+                isMobile={isMobile}
               />
             )}
             {showEditPanel && (
               <ProfileEditPanel
                 user={currentUser}
+                setUser={setCurrentUser}
                 onClose={() => setShowEditPanel(false)}
               />
             )}

@@ -38,3 +38,21 @@ export async function getChatMessageCount(chatId: string): Promise<number> {
     return 0; // fallback
   }
 }
+
+export async function deleteMessageById(id: string): Promise<void> {
+  try {
+    await axios.delete(`${MESSAGE_URL}${id}`);
+  } catch (err) {
+    console.error("Failed to delete message:", err);
+  }
+}
+
+
+export async function updateMessageById(id: string, content: string,chatId: string): Promise<void> {
+  try {
+    const res = await axios.put(`${MESSAGE_URL}${id}`, { content ,chatId}); // ✅ send "content"
+    return res.data;
+  } catch (err) {
+    console.error("Failed to update message:", err);
+  }
+}

@@ -1,18 +1,20 @@
+// InfoBox.tsx
 import { motion, AnimatePresence } from "framer-motion";
-
 
 interface InfoBoxProps {
     title: string;
     children: React.ReactNode;
     isOpen: boolean;
     onHover: () => void;
+    onClick?: () => void;
 }
 
-export function InfoBox({ title, children, isOpen, onHover }: InfoBoxProps) {
+export function InfoBox({ title, children, isOpen, onHover, onClick }: InfoBoxProps) {
     return (
         <div
-            className="mb-3 w-100"
+            className="mb-3 w-100 "
             onMouseEnter={onHover}
+            onClick={onClick}
             style={{ cursor: "pointer" }}
         >
             <div className="bg-white rounded shadow-sm p-3">

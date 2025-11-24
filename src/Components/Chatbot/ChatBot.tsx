@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Form, InputGroup, Button } from "react-bootstrap";
-import { streamText } from "../../utils/TextAppearing";
+import { containsCodeBlock, streamText } from "../../utils/TextAppearing";
 import { sendAiMessage } from "../../API/chatbotApi";
 import { nanoid } from "nanoid";
 import { PromptToggle } from "./PromptToggle";
@@ -8,6 +8,7 @@ import { parseMessage } from "../../utils/CodeSnippetFinder";
 import { CodeSnippet } from "./CodeSnippet";
 import styles from "../../Styles/ChatBot.module.css"
 import { useSwipeToggle } from "../../hooks/useSwipeToggle";
+import { IgnoreSwipe } from "../Features/IgnoreSwipe";
 
 interface ChatMessage {
     id: string;
@@ -35,6 +36,8 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
 
     const chatContainerRef = useRef<HTMLDivElement | null>(null);
     const [isAtBottom, setIsAtBottom] = useState(true);
+    const autoFollowRef = useRef(true);
+
 
     const swipe = useSwipeToggle({
         isOpen: chatList,
@@ -44,11 +47,21 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
     // Scroll listener to detect if user is at bottom
     const handleScroll = () => {
         if (!chatContainerRef.current) return;
+    
         const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
-        // consider "at bottom" if within 30px of the bottom
-        setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 30);
+    
+        const atBottom = scrollTop + clientHeight >= scrollHeight - 10;
+    
+        setIsAtBottom(atBottom);
+    
+        // If user moved up → stop auto following
+        if (!atBottom) {
+            autoFollowRef.current = false;
+        } else {
+            autoFollowRef.current = true;
+        }
     };
-
+    
     useEffect(() => {
         const container = chatContainerRef.current;
         if (!container) return;
@@ -71,7 +84,7 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
     });
 
     const ENHANCED_MODE_PROMPT = ". Please provide a more detailed, thoughtful, and structured answer.";
-    const CODE_MODE_PROMPT = '. When you generate code, please include ``` and the language name at the start of the code and ``` at the end of each code '
+    const CODE_MODE_PROMPT = '. When you generate code, please include ``` and the language name at the start of the code and ``` at the end of each code ,if its text use txt instead o code language'
 
     async function handleSend(e: React.FormEvent) {
         e.preventDefault();
@@ -93,8 +106,22 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
         };
 
         // 1️⃣ Add user message
-        setMessages((prev) => [...prev, userMessage]);
+        setMessages(prev => [...prev, userMessage]);
+        setTimeout(() => {
+            if (chatContainerRef.current) {
+                chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+            }
+        }, 10);
+
         setMessage("");
+        const textarea = document.querySelector("#chat-textarea") as HTMLTextAreaElement;
+        if (textarea) {
+            textarea.style.height = "35px";                  // reset height
+            textarea.style.borderTopLeftRadius = "20px";     // reset radius
+            textarea.style.borderBottomLeftRadius = "20px";
+            textarea.style.borderTopRightRadius = "0";
+            textarea.style.borderBottomRightRadius = "0";
+        }
         setIsSending(true);
 
         // 2️⃣ Add "thinking..." bubble
@@ -111,6 +138,7 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
         // 4️⃣ Remove thinking bubble
         setMessages((prev) => prev.filter((m) => m.id !== "thinking"));
 
+
         if (result.status === "success") {
             // 5️⃣ Stream AI response
             const aiMessage: ChatMessage = {
@@ -119,6 +147,7 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
                 content: "",
             };
             setMessages((prev) => [...prev, aiMessage]);
+            const isCode = containsCodeBlock(result.reply)
 
             streamText(
                 result.reply,
@@ -128,24 +157,33 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
                             msg.id === aiMessage.id ? { ...msg, content: partial } : msg
                         )
                     );
+            
+                    // 👇 auto-scroll during streaming
+                    if (autoFollowRef.current && chatContainerRef.current) {
+                        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+                    }
+            
                     if (isOver) setIsSending(false);
                 },
-                20
+                isCode ? 5 : 20
             );
+            
         } else {
             // Error
             const aiMessage: ChatMessage = {
                 id: nanoid() + "_ai",
                 sender: "ai",
-                content: "Error: " + result.error,
+                content: "Sorry, I had trouble processing your message. Could you resend your message? I'll reply right away.",
             };
             setMessages((prev) => [...prev, aiMessage]);
             setIsSending(false);
         }
+
+
     }
 
     return (
-        <div className="d-flex flex-column h-100 p-2 bg-light m-0"
+        <div className="d-flex flex-column h-100 py-2 bg-light m-0"
             onTouchStart={swipe.onTouchStart}
             onTouchMove={swipe.onTouchMove}
             onTouchEnd={swipe.onTouchEnd}>
@@ -199,8 +237,12 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
 
             {/* Chat area */}
 
-            <div className="flex-grow-1 overflow-auto mb-3 px-2 " 
-            style={{ width: '100%' }}>
+            <div
+                ref={chatContainerRef}
+                className="flex-grow-1 overflow-auto mt-3 px-2"
+                style={{ width: '100%' }}
+            >
+
 
                 {messages.map((msg) => {
                     if (msg.sender === "user") {
@@ -218,7 +260,7 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
                                         <div
                                             className="px-3 py-1 rounded-4 shadow-sm bg-primary text-white"
                                             style={{
-                                                maxWidth: '40vw',
+                                                maxWidth: isMobile ? '60vw' : '40vw',
                                                 wordBreak: 'break-word',
                                                 overflowWrap: 'break-word',
                                                 whiteSpace: 'pre-wrap',
@@ -274,9 +316,8 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
                                     <div className="d-flex flex-column mb-3 align-items-end" style={{ width: '100%' }}>
                                         <div
                                             className={`align-self-start p-2 rounded px-3 text-white ${styles.ai_message}`}
-                                            ref={chatContainerRef}
                                             style={{
-                                                maxWidth: '40vw',
+                                                maxWidth: isMobile ? '100%' : '40vw',
                                                 wordBreak: 'break-word',
                                                 overflowWrap: 'break-word',
                                                 whiteSpace: 'pre-wrap',
@@ -288,7 +329,7 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
                                                 typeof part === "string" ? (
                                                     <span key={i}>{part}</span>
                                                 ) : (
-                                                    <CodeSnippet key={i} code={part.code} language={part.language} />
+                                                    <div key={i}><IgnoreSwipe><CodeSnippet  code={part.code} language={part.language} /></IgnoreSwipe></div>
                                                 )
                                             )}
 
@@ -306,7 +347,7 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
                     }
                 })}
             </div>
-            <div className="d-flex flex-row gap-2">
+            <div className="d-flex flex-row gap-2 px-2">
 
                 <PromptToggle
                     label="Enhanced Reply Mode"
@@ -321,9 +362,10 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
             </div  >
 
             {/* Input */}
-            <Form onSubmit={handleSend}>
-                <InputGroup style={{ alignItems: "flex-end" }}>
+            <Form onSubmit={handleSend} className="mx-2">
+                <InputGroup style={{ alignItems: "flex-end" }} >
                     <Form.Control
+                        id="chat-textarea"
                         as="textarea"
                         rows={1}
                         value={message}
@@ -347,13 +389,11 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
                             target.style.height = newHeight + "px";
 
                             if (newHeight > 50) {
-                                // growing: corners all 15 except bottom-right stays 0
                                 target.style.borderTopLeftRadius = "15px";
                                 target.style.borderBottomLeftRadius = "15px";
                                 target.style.borderTopRightRadius = "15px";
                                 target.style.borderBottomRightRadius = "0";
                             } else {
-                                // default: left 20, right 0
                                 target.style.borderTopLeftRadius = "20px";
                                 target.style.borderBottomLeftRadius = "20px";
                                 target.style.borderTopRightRadius = "0";
@@ -378,11 +418,8 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
                         {isSending ? "Sending…" : "Send"}
                     </Button>
                 </InputGroup>
-
-
-
-
             </Form>
+
         </div>
     );
 };

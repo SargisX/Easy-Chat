@@ -6,6 +6,7 @@ import type { Chat, Message } from "../../types/chat";
 import type { User } from "../../types/user";
 import styles from "../../Styles/ChatItem.module.css"
 import { useSwipeToggle } from "../../hooks/useSwipeToggle";
+import { parseImageMessage } from "../../utils/imageMessageParser";
 
 
 interface ChatItemProps {
@@ -19,7 +20,7 @@ interface ChatItemProps {
 
 
 
-export default function ChatItem({ chat, user, onDeleteChat, lastMessage, closeChatList,chatList }: ChatItemProps) {
+export default function ChatItem({ chat, user, onDeleteChat, lastMessage, closeChatList, chatList }: ChatItemProps) {
   const [showMenu, setShowMenu] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [menuWidth, setMenuWidth] = useState(200);
@@ -28,6 +29,14 @@ export default function ChatItem({ chat, user, onDeleteChat, lastMessage, closeC
   const isActive = location.pathname === `/Easy-Chat/chat/${chat.id}`;
 
   const defAvatar = import.meta.env.VITE_UNKNOWN_USER_IMAGE
+  const { cleanText } = parseImageMessage(lastMessage?.content || "");
+  const finalMessage =
+  cleanText === lastMessage?.content
+    ? cleanText
+    : cleanText || lastMessage?.content === "" || !lastMessage?.content
+    ? "No messages yet"
+    : " 📷 Image File ... " + cleanText;
+
 
   const swipe = useSwipeToggle({
     isOpen: chatList!,
@@ -48,7 +57,7 @@ export default function ChatItem({ chat, user, onDeleteChat, lastMessage, closeC
       <Link
         to={`/Easy-Chat/chat/${chat.id}`}
         style={{ textDecoration: "none", color: "inherit" }}
-        
+
       >
         <ListGroup.Item
           className={`d-flex align-items-center gap-3 py-3 px-3 border-0 border-bottom ${styles.chatItem} ${isActive ? `${styles.active}` : ''}`}
@@ -77,7 +86,7 @@ export default function ChatItem({ chat, user, onDeleteChat, lastMessage, closeC
                 }`}
               style={{ maxWidth: "90%" }}
             >
-              {lastMessage?.content || "No recent message"}
+              {finalMessage || "No recent message"}
             </small>
 
           </div>

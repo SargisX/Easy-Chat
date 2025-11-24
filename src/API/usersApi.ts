@@ -36,8 +36,24 @@ export async function updateUserStatus(userId: string, status: string) {
   }
 }
 
-export async function deleteAllUsers() {
-  const res = await axios.delete(`${USER_URL}`);
+export async function getUserStatus(userId: string) {
+  try {
+    const res = await axios.get(`${USER_URL}${userId}/status`);
+    return res.data.status;
+  } catch (err) {
+    console.error("Failed to update user status:", err);
+    throw err;
+  }
+}
+
+export async function deleteUserById(userId: string) {
+  const res = await axios.delete(`${USER_URL}${userId}`);
+  return res.data;
+}
+
+
+export async function deleteAllUsers(id:string) {
+  const res = await axios.delete(`${USER_URL}/${id}`);
   return res.data;
 }
 
@@ -50,6 +66,7 @@ export async function updateUserProfile(id: string, data: any) {
 export async function logout() {
   try {
     localStorage.clear();
+    sessionStorage.clear();
     return { success: 1, message: "Logout successful" };
   } catch (err) {
     return { success: 0, message: "Logout failed" };
