@@ -10,7 +10,7 @@ import Layout from "./layouts/Layout";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import { logout } from "./API/usersApi";
-import { detectSmartphone } from "./utils/mobileCheck";
+import { DeviceType, detectSmartphone } from "./utils/mobileCheck";
 
 function AppRoutes() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -18,6 +18,7 @@ function AppRoutes() {
   );
 
   const location = useLocation();
+  const [deviceType, setDeviceType] = useState<DeviceType>(''as DeviceType);
 
   // BroadcastChannel listener (login/logout across tabs)
   useEffect(() => {
@@ -36,7 +37,8 @@ function AppRoutes() {
   }, []);
 
   useEffect(() => {
-    detectSmartphone();
+    const type = detectSmartphone();
+    setDeviceType(type)
   }, [!localStorage.getItem('deviceType')]);
 
   // 🔥 GLOBAL SESSION CHECK
@@ -98,11 +100,11 @@ function AppRoutes() {
       {/* Public pages */}
       <Route
         path="/Easy-Chat/login"
-        element={isAuthenticated ? <Navigate to="/Easy-Chat/" /> : <Login />}
+        element={isAuthenticated ? <Navigate to="/Easy-Chat/" /> : <Login deviceType = {deviceType}/>}
       />
       <Route
         path="/Easy-Chat/register"
-        element={isAuthenticated ? <Navigate to="/Easy-Chat/" /> : <Register />}
+        element={isAuthenticated ? <Navigate to="/Easy-Chat/" /> : <Register deviceType = {deviceType}/>}
       />
 
       {/* Protected pages */}

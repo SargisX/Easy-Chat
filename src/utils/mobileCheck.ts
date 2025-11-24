@@ -7,13 +7,13 @@ import {
   isDesktop,
 } from "react-device-detect";
 
-export type MobileType = "android" | "ios" | "unknown" | "not-mobile" | "desktop";
+export type DeviceType = "android" | "ios" | "unknown" | "not-mobile" | "desktop";
 
 const STORAGE_KEY = "deviceType";
 
-export function detectSmartphone(): MobileType {
+export function detectSmartphone(): DeviceType {
   // 1️⃣ Try reading existing value from localStorage
-  const saved = localStorage.getItem(STORAGE_KEY) as MobileType | null;
+  const saved = localStorage.getItem(STORAGE_KEY) as DeviceType | null;
   if (saved) return saved;
 
   // 2️⃣ Library-based detection
@@ -28,7 +28,7 @@ export function detectSmartphone(): MobileType {
   const isSmartphone =
     libraryMobile && environmentMobile && !isTablet && !isDesktop;
 
-  let type: MobileType;
+  let type: DeviceType;
 
   if (!isSmartphone && isDesktop) {
     type = "desktop";
