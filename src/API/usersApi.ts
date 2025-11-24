@@ -1,7 +1,9 @@
 import axios from "axios";
 import { User } from "../types/user";
 
-const USER_URL = "http://localhost:5000/users/";
+const urlStart = import.meta.env.VITE_BACKEND_DEVAPI;
+// const urlStart = import.meta.env.VITE_BACKEND_API;
+const USER_URL = urlStart + "/users/";
 
 
 // ------------------ USERS ------------------

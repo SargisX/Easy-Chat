@@ -1,7 +1,9 @@
 import axios from "axios";
 import type { Chat } from "../types/chat";
 
-const URL = "http://localhost:5000/chats/";
+const urlStart = import.meta.env.VITE_BACKEND_DEVAPI;
+// const urlStart = import.meta.env.VITE_BACKEND_API;
+const URL = urlStart + "/chats/";
 
 // ------------------ CHATS ------------------
 

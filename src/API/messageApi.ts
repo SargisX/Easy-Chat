@@ -1,7 +1,9 @@
 import axios from "axios";
 import { InputMessage, Message } from "../types/chat";
 
-const MESSAGE_URL = "http://localhost:5000/messages/";
+const urlStart = import.meta.env.VITE_BACKEND_DEVAPI;
+// const urlStart = import.meta.env.VITE_BACKEND_API;
+const MESSAGE_URL = urlStart + "/messages/";
 
 
 // ------------------ MESSAGES ------------------

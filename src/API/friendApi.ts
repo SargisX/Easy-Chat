@@ -1,7 +1,9 @@
 import axios from "axios";
 import type { Friend } from "../types/friend";
 
-const FRIEND_URL = "http://localhost:5000/friends";
+const urlStart = import.meta.env.VITE_BACKEND_DEVAPI;
+// const urlStart = import.meta.env.VITE_BACKEND_API;
+const FRIEND_URL = urlStart + "/friends";
 
 // Get all friends (accepted) of a user
 export const getMyFriends = async (userId: string): Promise<Friend[]> => {

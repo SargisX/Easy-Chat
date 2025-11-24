@@ -4,8 +4,8 @@ import { Message, InputMessage } from "../types/chat";
 import { getChatById } from "../API/chatApi";
 import { addMessage, deleteMessageById, updateMessageById } from "../API/messageApi";
 
-
-const backend = "http://localhost:5000";
+const backend = import.meta.env.VITE_BACKEND_DEVAPI;
+// const urlStart = import.meta.env.VITE_BACKEND_API;
 
 export function useChatMessages(chatId: string | undefined) {
   const [messages, setMessages] = useState<Message[]>([]);
