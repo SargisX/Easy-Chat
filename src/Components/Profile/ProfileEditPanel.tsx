@@ -68,7 +68,6 @@ export default function ProfileEditPanel({ user, setUser, onClose }: ProfileEdit
       // Optional: also update localStorage if you're storing current user
       localStorage.setItem("currentUser", JSON.stringify(updatedUser));
 
-      alert("Profile updated successfully!");
       onClose();
     } catch (err: any) {
       console.error(err);
