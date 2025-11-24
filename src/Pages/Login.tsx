@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Form, Button, Container, Alert } from "react-bootstrap";
-import { login } from "../context/authService";
+import { login } from "../API/authService";
 import { UserStatus } from "../types/user";
 import { updateUserStatus } from "../API/usersApi";
 import { initTabSession } from "../utils/authSync";

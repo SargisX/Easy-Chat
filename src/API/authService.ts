@@ -1,8 +1,14 @@
 import axios from "axios";
-import { AuthResponse } from "./types";
+import { AuthResponse } from "../context/types";
 
-const urlStart = import.meta.env.VITE_BACKEND_DEVAPI;
-// const urlStart = import.meta.env.VITE_BACKEND_API;
+const isLocalhost =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+
+// Choose API based on environment
+const urlStart = isLocalhost
+  ? import.meta.env.VITE_BACKEND_DEVAPI   // local dev
+  : import.meta.env.VITE_BACKEND_API;
 const API_URL = urlStart + "/auth"; // adjust if needed
 
 export async function register(username: string, password: string): Promise<AuthResponse> {

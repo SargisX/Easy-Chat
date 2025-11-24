@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Form, Button, Container, Alert } from "react-bootstrap";
-import { register } from "../context/authService";
+import { register } from "../API/authService";
 import styles from "../Styles/Logo.module.css";
 import { DeviceType } from "../utils/mobileCheck";
 
