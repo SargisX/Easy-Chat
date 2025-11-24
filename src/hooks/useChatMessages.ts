@@ -3,18 +3,15 @@ import io, { Socket } from "socket.io-client";
 import { Message, InputMessage } from "../types/chat";
 import { getChatById } from "../API/chatApi";
 import { addMessage, deleteMessageById, updateMessageById } from "../API/messageApi";
-import { useLocation } from "react-router-dom";
-
-const loc = useLocation();
 
 const isLocalhost =
-  loc.pathname.includes("localhost") ||
-  window.location.hostname === "localhost";
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
 
+// Choose API based on environment
 const backend = isLocalhost
-  ? import.meta.env.VITE_BACKEND_DEVAPI
-  : import.meta.env.VITE_BACKEND_API;
-    // production
+  ? import.meta.env.VITE_BACKEND_DEVAPI   // local dev
+  : import.meta.env.VITE_BACKEND_API;  
 
 
 export function useChatMessages(chatId: string | undefined) {
