@@ -1,8 +1,15 @@
 import axios from "axios";
 import type { Friend } from "../types/friend";
 
-const urlStart = import.meta.env.VITE_BACKEND_DEVAPI;
-// const urlStart = import.meta.env.VITE_BACKEND_API;
+const isLocalhost =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+
+// Choose API based on environment
+const urlStart = isLocalhost
+  ? import.meta.env.VITE_BACKEND_DEVAPI   // local dev
+  : import.meta.env.VITE_BACKEND_API;      // production
+
 const FRIEND_URL = urlStart + "/friends";
 
 // Get all friends (accepted) of a user
