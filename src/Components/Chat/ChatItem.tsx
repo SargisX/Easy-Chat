@@ -88,7 +88,6 @@ export default function ChatItem({ chat, user, onDeleteChat, lastMessage, closeC
             >
               {finalMessage || "No recent message"}
             </small>
-
           </div>
 
           <Button
