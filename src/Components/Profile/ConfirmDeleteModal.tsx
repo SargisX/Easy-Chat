@@ -13,7 +13,7 @@ export default function ConfirmDeleteModal({
   onClose,
   onConfirm,
 }: ConfirmDeleteModalProps) {
-  const REQUIRED_TEXT = "123";
+  const REQUIRED_TEXT = "EasyChat_DeleteAccount";
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
 

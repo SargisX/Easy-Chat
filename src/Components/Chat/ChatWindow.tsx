@@ -15,6 +15,7 @@ import { cloudinaryFolder, uploadToCloudinary } from "../../utils/CloudinaryFunc
 import ImagePreview from "./ImagePreview";
 import { compressImage } from "../../utils/compressImage";
 import { FiImage } from "react-icons/fi";
+import { parseImageMessage } from "../../utils/imageMessageParser";
 
 
 
@@ -128,9 +129,20 @@ export default function ChatWindow({ isMobile, openChatList, chatList }: WindowT
       let userMessage = input.trim();
       setInput("");
       if (editingMessage && selectedMessage) {
+        if (photoPreview && selectedFile) {
+          const compressed = await compressImage(selectedFile);
+          const cloudUrl = await uploadToCloudinary(compressed, cloudinaryFolder.Chat_Images);
+          // add $$$URL$$$ at the end
+          userMessage += ` |$|${cloudUrl}|$|`;
+          setPhotoPreview(false);
+          setSelectedFile(null);
+        }
+        const { imageUrl } = parseImageMessage(selectedMessage.content);
+        const finalText = imageUrl ? userMessage + " |$|" + imageUrl + "|$|" : userMessage;
+
 
         // Update existing message
-        updateMessage(selectedMessage.id, userMessage);
+        updateMessage(selectedMessage.id, finalText);
 
         setEditingMessage(false); // exit editing mode
         setSelectedMessage(null); // clear selected
@@ -175,7 +187,8 @@ export default function ChatWindow({ isMobile, openChatList, chatList }: WindowT
   // When entering edit mode, load message into input
   useEffect(() => {
     if (editingMessage && selectedMessage) {
-      setInput(selectedMessage.content);
+      const { cleanText } = parseImageMessage(selectedMessage.content)
+      setInput(cleanText);
       inputRef.current?.focus();
 
     }
@@ -513,14 +526,14 @@ export default function ChatWindow({ isMobile, openChatList, chatList }: WindowT
                       <FiImage size={22} />
                     </Button>
 
-                    
-                  <input
-                    id="image-input"
-                    type="file"
-                    accept="image/*"
-                    style={{ display: "none" }}
-                    onChange={handleImageSelect}
-                  />
+
+                    <input
+                      id="image-input"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={handleImageSelect}
+                    />
                     <Form.Control
                       id="chat-textarea"
                       as="textarea"

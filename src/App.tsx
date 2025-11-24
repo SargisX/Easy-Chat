@@ -44,7 +44,7 @@ function AppRoutes() {
     const sessionTime = sessionStorage.getItem("sessionTime")
     const sessionTimeNum = Number(sessionTime);
 
-    if (!sessionTime || sessionTime == 'null') {
+    if (sessionTime == 'null') {
       setIsAuthenticated(false);
       return;
     }
@@ -56,7 +56,6 @@ function AppRoutes() {
 
     if (elapsedHours >= maxSessionDays) {
       logout();
-      sessionStorage.removeItem("sessionTime");
 
       const bc = new BroadcastChannel("auth");
       bc.postMessage({ type: "logout" });

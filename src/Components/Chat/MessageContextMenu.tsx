@@ -66,7 +66,6 @@ export default function MessageContextMenu({ visible, x, y, onClose, message, op
     function handleEdit(e: React.MouseEvent) {
         e.preventDefault();
         editMessage(true)
-        
         onClose();
     }
 
