@@ -189,7 +189,7 @@ export default function ChatList({ isMobile, openChatList, chatList }: ListType)
               </div>
 
               <div className="my-2">
-                <ChatBotButton user={currentUser} />
+                <ChatBotButton user={currentUser} closeChatList={swipe.close} chatList={chatList} />
               </div>
 
               {chats.map((chat) => {
@@ -213,6 +213,8 @@ export default function ChatList({ isMobile, openChatList, chatList }: ListType)
                     user={user}
                     lastMessage={lastMessages[chat.id]}
                     onDeleteChat={handleDeleteChat}
+                    closeChatList={swipe.close}
+                    chatList={chatList}
                   />
                 );
               })}

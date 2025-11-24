@@ -36,6 +36,7 @@ export default function Login({ deviceType }: { deviceType: DeviceType }) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.userId);
 
+
         // PER-TAB session ID
         initTabSession()
         sessionStorage.setItem('sessionTime', Date.now().toString())

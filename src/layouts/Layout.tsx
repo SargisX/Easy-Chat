@@ -65,7 +65,7 @@ export default function Layout() {
                   <h2 className={`${styles.fontdinerSwankyRegular} p-0 m-0`} >Easy Chat</h2>
                 </Link>
               </div>
-              <ChatList />
+              <ChatList isMobile={isMobile} openChatList={closeChatList} chatList={chatListOpen} />
             </Col>
             <Col
               xs={9}
@@ -76,9 +76,11 @@ export default function Layout() {
             >
               <Routes>
                 {/* Normal chats */}
-                <Route path="chat/:id" element={<ChatWindow />} />
+                <Route path="chat/:id" element={<ChatWindow openChatList={openChatList}
+                  chatList={chatListOpen}
+                  isMobile={isMobile} />} />
                 {/* Chatbot */}
-                <Route path="chatbot" element={<ChatBot />} />
+                <Route path="chatbot" element={<ChatBot chatList={chatListOpen} openChatList={openChatList} isMobile={isMobile} />} />
                 <Route path="/" element={<EmptyChat isMobile={isMobile} openChatList={openChatList} chatList={chatListOpen} />} />
               </Routes>
             </Col>

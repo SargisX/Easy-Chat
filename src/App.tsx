@@ -39,7 +39,7 @@ function AppRoutes() {
   useEffect(() => {
     const type = detectSmartphone();
     setDeviceType(type)
-  }, [!localStorage.getItem('deviceType')]);
+  }, [!localStorage.getItem('deviceType'),localStorage.length]);
 
   // 🔥 GLOBAL SESSION CHECK
   const checkSession = () => {
