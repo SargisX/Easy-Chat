@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8" />
-    <script type="text/javascript">
-      // Redirect to index.html while preserving the original path in hash
-      var l = window.location;
-      var redirect = l.protocol + "//" + l.host + l.pathname.replace(/\/[^\/]*$/, "") + "/index.html#" + l.pathname;
-      window.location.replace(redirect);
+    <script>
+        const base = "/Easy-Chat/";
+        window.location.replace(base);
     </script>
-  </head>
-  <body></body>
+</head>
+<body></body>
 </html>
