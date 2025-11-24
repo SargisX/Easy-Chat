@@ -2,7 +2,7 @@ import { useState, ChangeEvent, useContext } from "react";
 import { motion } from "framer-motion";
 import { Button, Form } from "react-bootstrap";
 import { uploadToCloudinary } from "../../utils/CloudinaryFunctions";
-import { EditUser, User } from "../../types/user";
+import {  User } from "../../types/user";
 import { updateUserProfile } from "../../API/usersApi";
 import { ChatContext } from "../../context/chatContext";
 import { ActionTypes } from "../../context/types";
