@@ -165,7 +165,7 @@ export const ChatBot = ({ openChatList, chatList, isMobile }: BotType) => {
             
                     if (isOver) setIsSending(false);
                 },
-                isCode ? 5 : 20
+                isCode ? 5 : 10
             );
             
         } else {
