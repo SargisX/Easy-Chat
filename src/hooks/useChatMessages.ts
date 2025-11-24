@@ -3,9 +3,19 @@ import io, { Socket } from "socket.io-client";
 import { Message, InputMessage } from "../types/chat";
 import { getChatById } from "../API/chatApi";
 import { addMessage, deleteMessageById, updateMessageById } from "../API/messageApi";
+import { useLocation } from "react-router-dom";
 
-const backend = import.meta.env.VITE_BACKEND_DEVAPI;
-// const urlStart = import.meta.env.VITE_BACKEND_API;
+const loc = useLocation();
+
+const isLocalhost =
+  loc.pathname.includes("localhost") ||
+  window.location.hostname === "localhost";
+
+const backend = isLocalhost
+  ? import.meta.env.VITE_BACKEND_DEVAPI
+  : import.meta.env.VITE_BACKEND_API;
+    // production
+
 
 export function useChatMessages(chatId: string | undefined) {
   const [messages, setMessages] = useState<Message[]>([]);
