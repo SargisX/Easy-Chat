@@ -14,6 +14,7 @@ export default function Login({ deviceType }: { deviceType: DeviceType }) {
   const [status, setStatus] = useState<string>("");
   const navigate = useNavigate();
   const isMobileDevice = deviceType == "android" || deviceType == "ios" ? true : false
+  const logo = import.meta.env.VITE_EasyChat_Logo
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -61,9 +62,10 @@ export default function Login({ deviceType }: { deviceType: DeviceType }) {
     >
       {/* Title */}
       <div className="text-center mb-5">
+        <img src={logo} alt="logo" style={{ width: isMobileDevice? "3rem" : "10rem" ,height:'auto'}}/>
         <h2
           className={`${styles.fontdinerSwankyRegular} p-0 m-0 text-success`}
-          style={{ fontSize: isMobileDevice? "4rem" : "6rem" }}
+          style={{ fontSize: isMobileDevice? "3rem" : "6rem" }}
         >
           Easy Chat
         </h2>

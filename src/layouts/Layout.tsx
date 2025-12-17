@@ -19,6 +19,7 @@ export default function Layout() {
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   const [chatListOpen, setChatListOpen] = useState(false);
+  const logo = import.meta.env.VITE_EasyChat_Logo
 
   useEffect(() => {
     if (device === DeviceType.Android || device === DeviceType.Ios) {
@@ -62,6 +63,7 @@ export default function Layout() {
                   className="text-decoration-none text-success "
                   onClick={() => closeChatList}
                 >
+                  <img src={logo} alt="logo" style={{ width: isMobile ? "2rem" : "5rem", height: 'auto' }} />
                   <h2 className={`${styles.fontdinerSwankyRegular} p-0 m-0`} >Easy Chat</h2>
                 </Link>
               </div>
