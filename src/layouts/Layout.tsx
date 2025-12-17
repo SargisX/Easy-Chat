@@ -60,10 +60,9 @@ export default function Layout() {
               <div className="d-flex justify-content-between align-items-center p-3  m-0 border-bottom" >
                 <Link
                   to='/'
-                  className="text-decoration-none text-success "
+                  className="text-decoration-none text-success d-flex align-items-center"
                   onClick={() => closeChatList}
                 >
-                  <img src={logo} alt="logo" style={{ width: isMobile ? "2rem" : "5rem", height: 'auto' }} />
                   <h2 className={`${styles.fontdinerSwankyRegular} p-0 m-0`} >Easy Chat</h2>
                 </Link>
               </div>
