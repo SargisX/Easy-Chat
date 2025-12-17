@@ -63,7 +63,7 @@ export default function Layout() {
                   className="text-decoration-none text-success d-flex align-items-center gap-2"
                   onClick={() => closeChatList}
                 >
-                  <img src={logo} alt="logo" style={{ width: isMobile ? "1rem" : "2.5rem", height: 'auto' }} />
+                  <img src={logo} alt="logo" style={{ width: "2.5rem", height: 'auto' }} />
                   <h2 className={`${styles.fontdinerSwankyRegular} p-0 m-0`} >Easy Chat</h2>
                 </Link>
               </div>
@@ -126,9 +126,10 @@ export default function Layout() {
               <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
                 <Link
                   to='/'
-                  className="text-decoration-none text-success "
+                  className="text-decoration-none text-success d-flex align-items-center gap-2"
                   onClick={() => closeChatList}
                 >
+                  <img src={logo} alt="logo" style={{ width: "1rem" , height: 'auto' }} />
                   <h2 className={`${styles.fontdinerSwankyRegular} p-0 m-0`} >Easy Chat</h2>
                 </Link>
                 <button
