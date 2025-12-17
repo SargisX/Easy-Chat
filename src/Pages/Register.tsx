@@ -45,8 +45,8 @@ export default function Register({ deviceType }: { deviceType: DeviceType }) {
       className="d-flex flex-column justify-content-center align-items-center "
     >
       {/* Title */}
-      <div className="text-center mb-5">
-        <img src={logo} alt="logo" style={{ width: isMobileDevice? "3rem" : "10rem" ,height:'auto'}}/>
+      <div className="text-center mb-5 d-flex align-items-center gap-4">
+        <img src={logo} alt="logo" style={{ width: isMobileDevice? "3rem" : "5.5rem" ,height:'auto'}}/>
         <h2
           className={`${styles.fontdinerSwankyRegular} p-0 m-0 text-success`}
           style={{ fontSize: isMobileDevice ? "3rem" : "6rem" }}
