@@ -129,7 +129,7 @@ export default function Layout() {
                   className="text-decoration-none text-success d-flex align-items-center gap-2"
                   onClick={() => closeChatList}
                 >
-                  <img src={logo} alt="logo" style={{ width: "1rem" , height: 'auto' }} />
+                  <img src={logo} alt="logo" style={{ width: "2rem" , height: 'auto' }} />
                   <h2 className={`${styles.fontdinerSwankyRegular} p-0 m-0`} >Easy Chat</h2>
                 </Link>
                 <button
