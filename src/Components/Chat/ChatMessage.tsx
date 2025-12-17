@@ -32,7 +32,7 @@ export default function ChatMessage({
   });
 
   const isOwnMessage = align === "end";
-  const defAvatar = import.meta.env.VITE_UNKNOWN_USER_IMAGE
+  const defAvatar = "."+import.meta.env.VITE_UNKNOWN_USER_IMAGE
 
   const { cleanText, imageUrl: parsedImage } = parseImageMessage(content);
   const finalImage = imageUrl || parsedImage;
